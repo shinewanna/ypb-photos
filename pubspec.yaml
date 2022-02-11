@@ -1,0 +1,33 @@
+name: ypb_photos
+version: 1.0.0+1
+publish_to: none
+description: A new Flutter project.
+environment: 
+  sdk: '>=2.15.1 <3.0.0'
+
+dependencies: 
+  cupertino_icons: 1.0.2
+  camera: 0.9.4+11
+  get: 4.6.1
+  loading_animations: 2.2.0
+  on_image_matrix: 1.0.0+1
+  print_color: 3.0.5
+  velocity_x: 3.4.0
+
+  flutter: 
+    sdk: flutter
+  
+
+
+dev_dependencies: 
+  flutter_lints: ^1.0.0
+  lints: 1.0.1
+  flutter_test: 
+    sdk: flutter
+
+get_cli: 
+  sub_folder: false
+
+flutter: 
+  uses-material-design: true
+
