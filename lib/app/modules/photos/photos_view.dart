@@ -16,7 +16,6 @@ class PhotosView extends GetView<PhotosController> {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Photos'),
-          centerTitle: true,
         ),
         body: ItemGrid(
           children: photos

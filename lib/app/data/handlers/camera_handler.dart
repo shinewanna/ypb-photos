@@ -1,5 +1,4 @@
 import 'package:camera/camera.dart';
-import 'package:print_color/print_color.dart';
 
 class CameraHandler {
   static List<CameraDescription>? cameras;
@@ -8,7 +7,7 @@ class CameraHandler {
     try {
       cameras = await availableCameras();
     } on CameraException catch (e) {
-      Print.red('Camera Not Found $e');
+      throw Exception('[Error]CameraHandler: $e');
     }
   }
 }

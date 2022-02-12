@@ -16,8 +16,8 @@ class _ColorConstant {
 class _DefaultConstant {
   final appName = 'YPB Photos';
   final exposure = 0.0;
-  final width = 640.0;
-  final height = 480.0;
+  final width = 640;
+  final height = 480;
   final photosLimit = 3;
 }
 

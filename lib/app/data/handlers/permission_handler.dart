@@ -10,4 +10,6 @@ class PermissionHandler {
     }
     return true;
   }
+
+  Future<bool> get isStorageGranted => Permission.storage.isGranted;
 }

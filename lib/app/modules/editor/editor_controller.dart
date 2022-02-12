@@ -30,24 +30,27 @@ class EditorController extends GetxController with WidgetsBindingObserver {
       CacheProvider.width.getValue(defaultValue: AppConstant.def.width) as int;
   var _height = CacheProvider.height
       .getValue(defaultValue: AppConstant.def.height) as int;
-  var _photosLimit = CacheProvider.photosLimit
-      .getValue(defaultValue: AppConstant.def.photosLimit) as int;
+  final _photosLimit = (CacheProvider.photosLimit
+          .getValue(defaultValue: AppConstant.def.photosLimit) as int)
+      .obs;
   final _photos = <String>[];
 
   int get width => _width;
 
   int get height => _height;
 
-  int get photosLimit => _photosLimit;
+  int get photosLimit => _photosLimit.value;
 
   double get exposure => _exposure.value;
 
   setWidth(String value) {
+    if (value.isEmpty) return;
     _width = int.parse(value);
     CacheProvider.width.setValue(_width);
   }
 
   setHeight(String value) {
+    if (value.isEmpty) return;
     _height = int.parse(value);
     CacheProvider.height.setValue(_height);
   }
@@ -58,16 +61,21 @@ class EditorController extends GetxController with WidgetsBindingObserver {
     CacheProvider.exposure.setValue(value);
   }
 
-  setPhotosLimit(String? value) {
+  setPhotosLimit(int? value) {
     if (value == null) return;
-    _photosLimit = int.parse(value);
-    CacheProvider.photosLimit.setValue(_photosLimit);
+    _photosLimit.value = value;
+    CacheProvider.photosLimit.setValue(value);
   }
 
   saveImage() async {
     //* Check permission
-    final isAllow = await _permissionHandler.reqStorage();
-    if (!isAllow) return;
+    final isGranted = await _permissionHandler.isStorageGranted;
+    if (!isGranted) {
+      await _permissionHandler.reqStorage();
+      return;
+    }
+    if (_cameraController == null) return;
+
     final pd = ProgressDialog(context: Get.context);
     pd.show(
         max: 100, msg: 'Taking Photo...', progressType: ProgressType.valuable);
@@ -104,19 +112,24 @@ class EditorController extends GetxController with WidgetsBindingObserver {
 
   //* Camera Initializing
   _initializeCamera() {
-    _cameraController =
-        CameraController(CameraHandler.cameras![0], ResolutionPreset.max);
+    if (CameraHandler.cameras!.isEmpty) {
+      cameraResp.value =
+          Resp(data: 'No valid camera found', message: MsgState.error);
+    } else {
+      _cameraController =
+          CameraController(CameraHandler.cameras![0], ResolutionPreset.max);
 
-    _cameraController!.initialize().then((_) {
-      cameraResp.value = Resp(data: _cameraController, message: MsgState.data);
-    });
+      _cameraController!.initialize().then((_) {
+        cameraResp.value =
+            Resp(data: _cameraController, message: MsgState.data);
+      });
+    }
   }
 
   @override
   void onInit() {
     super.onInit();
     WidgetsBinding.instance!.addObserver(this);
-    _permissionHandler.reqStorage();
     _initializeCamera();
   }
 
@@ -133,10 +146,8 @@ class EditorController extends GetxController with WidgetsBindingObserver {
     if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
     }
-    //* Need dispose and reinitialize cause of we can't use the preview camera outside of the app.
-    if (state == AppLifecycleState.inactive) {
-      _cameraController!.dispose();
-    } else if (state == AppLifecycleState.resumed) {
+    //* Need to reinitialize cause of we can't use the preview camera outside of the app.
+    if (state == AppLifecycleState.resumed) {
       _initializeCamera();
     }
   }

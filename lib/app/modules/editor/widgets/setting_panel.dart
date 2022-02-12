@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ypb_photos/app/core/configs/app_constant.dart';
 import 'package:ypb_photos/app/modules/editor/editor_controller.dart';
 import 'package:ypb_photos/app/modules/editor/widgets/widgets/photos_row.dart';
-import 'package:ypb_photos/app/modules/editor/widgets/widgets/text_slider.dart';
+import 'package:ypb_photos/app/modules/editor/widgets/widgets/exposure_row.dart';
 import 'package:ypb_photos/app/modules/editor/widgets/widgets/width_height_row.dart';
 
 class SettingPannel extends GetView<EditorController> {
@@ -15,20 +15,7 @@ class SettingPannel extends GetView<EditorController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          TextSlider(
-            title: 'Exposure',
-            slider: Obx(
-              () => Expanded(
-                child: Slider(
-                  value: controller.exposure,
-                  min: -2.0,
-                  max: 2.0,
-                  divisions: 50,
-                  onChanged: controller.setExposure,
-                ),
-              ),
-            ),
-          ),
+          ExposureRow(),
           WidthHeightRow(),
           PhotosRow(),
         ],

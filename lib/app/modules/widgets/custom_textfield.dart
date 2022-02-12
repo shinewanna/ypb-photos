@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class CustomTextField extends Container {
@@ -18,8 +19,10 @@ class CustomTextField extends Container {
   @override
   Widget build(BuildContext context) {
     final decoration = InputDecoration(
-      contentPadding:
-          const EdgeInsets.only(left: 15.0, top: 15.0, right: 0.0, bottom: 0.0),
+      contentPadding: const EdgeInsets.only(
+        left: 15.0,
+        top: 15.0,
+      ),
       isDense: true,
       border: OutlineInputBorder(
         borderRadius: const BorderRadius.all(
@@ -33,6 +36,8 @@ class CustomTextField extends Container {
       decoration: decoration,
       onChanged: onChanged,
       initialValue: value,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      autovalidateMode: AutovalidateMode.always,
     ).p8();
   }
 }
