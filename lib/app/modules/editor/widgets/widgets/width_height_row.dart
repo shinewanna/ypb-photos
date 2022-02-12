@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
 import 'package:ypb_photos/app/modules/editor/editor_controller.dart';
 import 'package:ypb_photos/app/modules/widgets/custom_textfield.dart';
 
@@ -15,7 +14,10 @@ class WidthHeightRow extends GetView<EditorController> {
             child: Padding(
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: CustomTextField(
-            keyboardType: TextInputType.number,
+            value: controller.width.toString(),
+            keyboardType:
+                TextInputType.numberWithOptions(decimal: true, signed: false),
+            onChanged: controller.setWidth,
           ),
         )),
         Text('Height'),
@@ -23,7 +25,10 @@ class WidthHeightRow extends GetView<EditorController> {
             child: Padding(
           padding: const EdgeInsets.only(left: 25.0, right: 25.0),
           child: CustomTextField(
-            keyboardType: TextInputType.number,
+            value: controller.height.toString(),
+            keyboardType:
+                TextInputType.numberWithOptions(decimal: true, signed: false),
+            onChanged: controller.setHeight,
           ),
         )),
       ],

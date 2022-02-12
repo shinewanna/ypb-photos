@@ -4,6 +4,7 @@ class AppConstant {
   AppConstant._();
   static final color = _ColorConstant();
   static final def = _DefaultConstant();
+  static final file = _FileConstant();
 }
 
 class _ColorConstant {
@@ -13,5 +14,13 @@ class _ColorConstant {
 }
 
 class _DefaultConstant {
-  final appName = 'YBP Photos';
+  final appName = 'YPB Photos';
+  final exposure = 0.0;
+  final width = 640.0;
+  final height = 480.0;
+  final photosLimit = 3;
+}
+
+class _FileConstant {
+  final imagePath = '/storage/emulated/0/Download/';
 }

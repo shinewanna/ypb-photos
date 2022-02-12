@@ -20,15 +20,15 @@ class PhotosRow extends GetView<EditorController> {
     ];
     return Row(
       children: [
-        SizedBox(
-          width: Get.width / 2,
-          child: Text('Photos'),
+        Text('Photos'),
+        40.widthBox,
+        Expanded(
+          child: VxTextDropDown(
+            _defaultPhotosRange,
+            selectedValue: controller.photosLimit.toString(),
+            onChanged: controller.setPhotosLimit,
+          ).make(),
         ),
-        VxTextDropDown(
-          _defaultPhotosRange,
-          selectedValue: '4',
-          onChanged: (e) {},
-        ).make(),
       ],
     );
   }

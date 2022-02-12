@@ -14,7 +14,7 @@ class TextSlider extends GetView<EditorController> {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: Text(title)),
+        Text(title),
         slider,
       ],
     );

@@ -9,13 +9,21 @@ dependencies:
   cupertino_icons: 1.0.2
   camera: 0.9.4+11
   get: 4.6.1
+  hive: 2.0.5
+  hive_flutter: 1.1.0
+  image: 3.1.1
   loading_animations: 2.2.0
-  on_image_matrix: 1.0.0+1
+  path_provider: 2.0.9
   print_color: 3.0.5
+  sn_progress_dialog: ^1.0.3
   velocity_x: 3.4.0
 
   flutter: 
     sdk: flutter
+  permission_handler: ^8.3.0
+  photo_view: ^0.13.0
+  
+  
   
 
 

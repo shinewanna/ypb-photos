@@ -18,48 +18,14 @@ class SettingPannel extends GetView<EditorController> {
           TextSlider(
             title: 'Exposure',
             slider: Obx(
-              () => Slider(
-                value: controller.exposure,
-                min: 0.0,
-                max: 2.0,
-                divisions: 50,
-                onChanged: controller.updateExposure,
-              ),
-            ),
-          ),
-          TextSlider(
-            title: 'Brightness&Contrast',
-            slider: Obx(
-              () => Slider(
-                value: controller.brightnessAndContrast,
-                min: -1.0,
-                max: 1.0,
-                divisions: 50,
-                onChanged: controller.updateBrightnessAndContrast,
-              ),
-            ),
-          ),
-          TextSlider(
-            title: 'Saturation',
-            slider: Obx(
-              () => Slider(
-                value: controller.saturation,
-                min: 0.0,
-                max: 2.0,
-                divisions: 50,
-                onChanged: controller.updateSaturation,
-              ),
-            ),
-          ),
-          TextSlider(
-            title: 'Visibility',
-            slider: Obx(
-              () => Slider(
-                value: controller.visibility,
-                min: 0.0,
-                max: 1.0,
-                divisions: 50,
-                onChanged: controller.updateVisibility,
+              () => Expanded(
+                child: Slider(
+                  value: controller.exposure,
+                  min: -2.0,
+                  max: 2.0,
+                  divisions: 50,
+                  onChanged: controller.setExposure,
+                ),
               ),
             ),
           ),

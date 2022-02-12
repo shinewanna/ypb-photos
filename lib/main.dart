@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:ypb_photos/app/core/configs/app_constant.dart';
 import 'package:ypb_photos/app/data/handlers/camera_handler.dart';
+import 'package:ypb_photos/app/data/handlers/file_handler.dart';
+import 'package:ypb_photos/app/data/providers/cache_provider.dart';
 
 import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CameraHandler.setCameras();
+  final fileHandler = FileHandler();
+  final path = await fileHandler.getDbPath;
+  Hive.init(path);
+  await CacheProvider.open();
   runApp(
     GetMaterialApp(
       title: AppConstant.def.appName,
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         iconTheme: const IconThemeData(color: Colors.white),
         primaryColor: AppConstant.color.p,
