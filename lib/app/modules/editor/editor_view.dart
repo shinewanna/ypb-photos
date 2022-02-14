@@ -27,7 +27,10 @@ class EditorView extends GetView<EditorController> {
                   Obx(
                     () => Output(
                       controller.cameraResp.value,
-                      onData: (CameraController data) => CameraPreview(data),
+                      onData: (CameraController data) => SizedBox(
+                        height: double.infinity,
+                        child: CameraPreview(data),
+                      ),
                     ),
                   ),
                   Positioned(
@@ -41,11 +44,11 @@ class EditorView extends GetView<EditorController> {
                         },
                         child: Nth(),
                         style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: const EdgeInsets.all(30),
-                            enableFeedback: true,
-                            elevation: 1.0,
-                            animationDuration: Duration(seconds: 3)),
+                          shape: CircleBorder(),
+                          padding: const EdgeInsets.all(30),
+                          enableFeedback: true,
+                          elevation: 1.0,
+                        ),
                       )),
                 ],
               ),

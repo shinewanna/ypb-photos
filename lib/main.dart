@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:ypb_photos/app/core/configs/app_constant.dart';
+import 'package:ypb_photos/app/core/utils/dependency_injection.dart';
 import 'package:ypb_photos/app/data/handlers/camera_handler.dart';
 import 'package:ypb_photos/app/data/handlers/file_handler.dart';
 import 'package:ypb_photos/app/data/providers/cache_provider.dart';
@@ -12,7 +13,8 @@ import 'app/routes/app_pages.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await CameraHandler.setCameras();
-  final fileHandler = FileHandler();
+  DependencyInjection.inject();
+  final fileHandler = Get.find<FileHandler>();
   final path = await fileHandler.getDbPath;
   Hive.init(path);
   await CacheProvider.open();

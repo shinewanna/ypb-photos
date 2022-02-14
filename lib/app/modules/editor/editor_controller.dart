@@ -19,7 +19,7 @@ import 'package:ypb_photos/app/routes/app_pages.dart';
 
 class EditorController extends GetxController with WidgetsBindingObserver {
   CameraController? _cameraController;
-  final _fileHandler = FileHandler();
+  final _fileHandler = Get.find<FileHandler>();
   final _permissionHandler = PermissionHandler();
 
   final cameraResp = Resp().obs;
@@ -116,8 +116,12 @@ class EditorController extends GetxController with WidgetsBindingObserver {
       cameraResp.value =
           Resp(data: 'No valid camera found', message: MsgState.error);
     } else {
-      _cameraController =
-          CameraController(CameraHandler.cameras![0], ResolutionPreset.max);
+      _cameraController = CameraController(
+        CameraHandler.cameras![0],
+        ResolutionPreset.medium,
+        enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.yuv420,
+      );
 
       _cameraController!.initialize().then((_) {
         cameraResp.value =

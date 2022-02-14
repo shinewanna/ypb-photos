@@ -14,22 +14,27 @@ dependencies:
   image: 3.1.1
   loading_animations: 2.2.0
   path_provider: 2.0.9
+  permission_handler: 8.3.0
   print_color: 3.0.5
-  sn_progress_dialog: ^1.0.3
+  photo_view: 0.13.0
+  sn_progress_dialog: 1.0.3
   velocity_x: 3.4.0
 
   flutter: 
     sdk: flutter
-  permission_handler: ^8.3.0
-  photo_view: ^0.13.0
+
   
   
   
 
 
 dev_dependencies: 
-  flutter_lints: ^1.0.0
+  flutter_lints: 1.0.0
+  integration_test_tizen: 2.0.1
   lints: 1.0.1
+  
+  integration_test:
+    sdk: flutter
   flutter_test: 
     sdk: flutter
 
