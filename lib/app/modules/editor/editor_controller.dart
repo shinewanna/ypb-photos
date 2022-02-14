@@ -17,10 +17,10 @@ import 'package:ypb_photos/app/data/providers/cache_provider.dart';
 import 'package:ypb_photos/app/routes/app_pages.dart';
 
 class EditorController extends GetxController with WidgetsBindingObserver {
-  CameraController? _cameraController;
+  final _cameraHandler = CameraHandler.createController();
   final _fileHandler = Get.find<FileHandler>();
   final _permissionHandler = PermissionHandler();
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   final cameraResp = Resp().obs;
   final _exposure = (CacheProvider.exposure
@@ -33,6 +33,8 @@ class EditorController extends GetxController with WidgetsBindingObserver {
   final _photosLimit = (CacheProvider.photosLimit
           .getValue(defaultValue: AppConstant.def.photosLimit) as int)
       .obs;
+
+  GlobalKey<FormState> get formKey => _formKey;
 
   int get width => _width;
 
@@ -54,7 +56,7 @@ class EditorController extends GetxController with WidgetsBindingObserver {
 
   setExposure(double value) {
     _exposure.value = value;
-    _cameraController!.setExposureOffset(value);
+    _cameraHandler.controller!.setExposureOffset(value);
     CacheProvider.exposure.setValue(value);
   }
 
@@ -71,10 +73,15 @@ class EditorController extends GetxController with WidgetsBindingObserver {
       await _permissionHandler.reqStorage();
       return;
     }
-
-    if (_cameraController == null || !formKey.currentState!.validate()) return;
+    //* Height Width validate and camera
+    if (_cameraHandler.controller == null ||
+        !_formKey.currentState!.validate()) {
+      return;
+    }
+    //* Set Width and Height locally when save image
     CacheProvider.width.setValue(_width);
     CacheProvider.height.setValue(_height);
+
     final pd = ProgressDialog(context: Get.context);
     pd.show(
         max: 100, msg: 'Taking Photos...', progressType: ProgressType.valuable);
@@ -85,7 +92,7 @@ class EditorController extends GetxController with WidgetsBindingObserver {
     int eachProgress = (40 / photosLimit).floor();
     for (int i = 0; i < photosLimit; i++) {
       pd.update(value: progress += eachProgress, msg: 'Taking Photos...');
-      files.add(await _cameraController!.takePicture());
+      files.add(await _cameraHandler.controller!.takePicture());
     }
 
     //* Resize
@@ -109,7 +116,7 @@ class EditorController extends GetxController with WidgetsBindingObserver {
 
     //* Save
     final photos = <String>[];
-    eachProgress = 20 ~/ photosLimit;
+    eachProgress = (20 / photosLimit).floor();
     for (var photo in resizedPhotos) {
       pd.update(value: progress += eachProgress, msg: 'Saving...');
       final savedImage = await _fileHandler.saveImage(photo);
@@ -121,21 +128,17 @@ class EditorController extends GetxController with WidgetsBindingObserver {
 
   //* Camera Initializing
   _initializeCamera() {
+    //* If camera empty
     if (CameraHandler.cameras!.isEmpty) {
       cameraResp.value =
           Resp(data: 'No valid camera found', message: MsgState.error);
     } else {
-      _cameraController = CameraController(
-        CameraHandler.cameras![0],
-        ResolutionPreset.medium,
-        enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.yuv420,
-      );
-
-      _cameraController!.initialize().then((_) {
+      //* Initialize
+      _cameraHandler.initialize().then((_) {
+        //* After initailize update UI accordingly
         cameraResp.value =
-            Resp(data: _cameraController, message: MsgState.data);
-        _cameraController!.setExposureOffset(CacheProvider.exposure
+            Resp(data: _cameraHandler.controller, message: MsgState.data);
+        _cameraHandler.controller!.setExposureOffset(CacheProvider.exposure
             .getValue(defaultValue: AppConstant.def.exposure) as double);
       });
     }
@@ -158,7 +161,8 @@ class EditorController extends GetxController with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
 
-    if (_cameraController == null || !_cameraController!.value.isInitialized) {
+    if (_cameraHandler.controller == null ||
+        !_cameraHandler.controller!.value.isInitialized) {
       return;
     }
     //* Need to reinitialize cause of we can't use the preview camera outside of the app.

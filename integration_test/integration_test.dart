@@ -18,7 +18,7 @@ void main() {
     await tester.pumpAndSettle(Duration(seconds: 1));
     await tester.tap(find.byType(DropdownButton<int>));
     await tester.pumpAndSettle(Duration(seconds: 1));
-    await tester.tap(find.byKey(Key('1')).last, warnIfMissed: false);
+    await tester.tap(find.byKey(Key('2')).last, warnIfMissed: false);
     await tester.pumpAndSettle(Duration(seconds: 1));
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle(Duration(seconds: 3));
