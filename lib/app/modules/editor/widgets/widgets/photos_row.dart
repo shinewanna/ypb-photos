@@ -17,6 +17,7 @@ class PhotosRow extends GetView<EditorController> {
             () => DropdownButton<int>(
               items: _defaultPhotosRange
                   .map((e) => DropdownMenuItem(
+                        key: Key(e.toString()),
                         child: Text(e.toString()),
                         value: e,
                       ))

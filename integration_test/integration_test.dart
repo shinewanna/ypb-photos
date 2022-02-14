@@ -1,38 +1,30 @@
-import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:path/path.dart';
-import 'package:print_color/print_color.dart';
+import 'package:flutter/material.dart';
+import 'package:ypb_photos/app/modules/photos/widgets/photo.dart';
+import 'package:ypb_photos/app/modules/widgets/custom_textfield.dart';
 import 'package:ypb_photos/main.dart' as app;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Full app test', (tester) async {
-    final envVars = Platform.environment;
-    Print.green(envVars);
-    final adbPath = join(
-      envVars['ANDROID_SDK_ROOT'] ?? envVars['ANDROID_HOME']!,
-      'platform-tools',
-      Platform.isWindows ? 'adb.exe' : 'adb',
-    );
-    await Process.run(adbPath, [
-      'shell',
-      'pm',
-      'grant',
-      'com.swn.ypb_photos',
-      'android.permission.CAMERA'
-    ]);
-    await Process.run(adbPath, [
-      'shell',
-      'pm',
-      'grant',
-      'com.swn.ypb_photos',
-      'android.permission.WRITE_EXTERNAL_STORAGE'
-    ]);
     app.main();
     await tester.pumpAndSettle(Duration(seconds: 1));
-    final startBtn = find.text('Start');
-    await tester.tap(startBtn);
+    await tester.tap(find.text('Start'));
     await tester.pumpAndSettle(Duration(seconds: 1));
+    await tester.drag(find.byType(Slider), Offset(100, 0));
+    await tester.pumpAndSettle(Duration(seconds: 1));
+    await tester.enterText(find.byType(CustomTextField).last, '1080');
+    await tester.pumpAndSettle(Duration(seconds: 1));
+    await tester.tap(find.byType(DropdownButton<int>));
+    await tester.pumpAndSettle(Duration(seconds: 1));
+    await tester.tap(find.byKey(Key('1')).last, warnIfMissed: false);
+    await tester.pumpAndSettle(Duration(seconds: 1));
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle(Duration(seconds: 3));
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pumpAndSettle(Duration(seconds: 10));
+    await tester.tap(find.byType(Photo).first);
+    await tester.pumpAndSettle(Duration(seconds: 3));
   });
 }

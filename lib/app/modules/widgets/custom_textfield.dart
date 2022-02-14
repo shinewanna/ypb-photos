@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:ypb_photos/app/core/utils/app_util.dart';
 
 class CustomTextField extends Container {
   final TextEditingController? controller;
@@ -37,7 +38,7 @@ class CustomTextField extends Container {
       onChanged: onChanged,
       initialValue: value,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      autovalidateMode: AutovalidateMode.always,
+      validator: (value) => AppUtil.validate(value),
     ).p8();
   }
 }

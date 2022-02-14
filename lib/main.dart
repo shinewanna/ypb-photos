@@ -18,8 +18,15 @@ void main() async {
   final path = await fileHandler.getDbPath;
   Hive.init(path);
   await CacheProvider.open();
-  runApp(
-    GetMaterialApp(
+  runApp(PrePage());
+}
+
+class PrePage extends StatelessWidget {
+  const PrePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
       title: AppConstant.def.appName,
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
@@ -36,6 +43,6 @@ void main() async {
           centerTitle: true,
         ),
       ),
-    ),
-  );
+    );
+  }
 }

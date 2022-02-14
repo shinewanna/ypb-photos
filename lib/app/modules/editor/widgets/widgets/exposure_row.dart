@@ -8,9 +8,9 @@ class ExposureRow extends GetView<EditorController> {
     return Row(
       children: [
         Text('Exposure'),
-        Obx(
-          () => Expanded(
-            child: Slider(
+        Expanded(
+          child: Obx(
+            () => Slider(
               value: controller.exposure,
               min: -2.0,
               max: 2.0,

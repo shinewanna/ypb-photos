@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:get/get.dart';
 
 import 'package:ypb_photos/app/modules/editor/editor_binding.dart';
@@ -16,7 +18,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.SPLASH;
+  static String INITIAL = Routes.SPLASH;
 
   static final routes = [
     GetPage(

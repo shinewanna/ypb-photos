@@ -54,4 +54,6 @@ class AppUtil {
       snackPosition: SnackPosition.BOTTOM,
     );
   }
+
+  static String? validate(String? value) => value!.isEmpty ? 'Required' : null;
 }

@@ -32,7 +32,7 @@ class SplashView extends GetView<SplashController> {
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: ElevatedButton.icon(
-              onPressed: () => Get.toNamed(Routes.EDITOR),
+              onPressed: () => Get.offAllNamed(Routes.EDITOR),
               icon: Icon(Icons.camera_alt),
               label: Text('Start'),
             ),

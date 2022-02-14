@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sn_progress_dialog/sn_progress_dialog.dart';
 import 'package:ypb_photos/app/core/configs/app_constant.dart';
-import 'package:ypb_photos/app/core/utils/app_util.dart';
 import 'package:ypb_photos/app/data/enums/msg_state.dart';
 import 'package:ypb_photos/app/data/handlers/camera_handler.dart';
 import 'package:ypb_photos/app/data/handlers/file_handler.dart';
@@ -21,9 +20,10 @@ class EditorController extends GetxController with WidgetsBindingObserver {
   CameraController? _cameraController;
   final _fileHandler = Get.find<FileHandler>();
   final _permissionHandler = PermissionHandler();
+  final formKey = GlobalKey<FormState>();
 
   final cameraResp = Resp().obs;
-  final _exposure = (CacheProvider.width
+  final _exposure = (CacheProvider.exposure
           .getValue(defaultValue: AppConstant.def.exposure) as double)
       .obs;
   var _width =
@@ -33,7 +33,6 @@ class EditorController extends GetxController with WidgetsBindingObserver {
   final _photosLimit = (CacheProvider.photosLimit
           .getValue(defaultValue: AppConstant.def.photosLimit) as int)
       .obs;
-  final _photos = <String>[];
 
   int get width => _width;
 
@@ -46,13 +45,11 @@ class EditorController extends GetxController with WidgetsBindingObserver {
   setWidth(String value) {
     if (value.isEmpty) return;
     _width = int.parse(value);
-    CacheProvider.width.setValue(_width);
   }
 
   setHeight(String value) {
     if (value.isEmpty) return;
     _height = int.parse(value);
-    CacheProvider.height.setValue(_height);
   }
 
   setExposure(double value) {
@@ -74,41 +71,53 @@ class EditorController extends GetxController with WidgetsBindingObserver {
       await _permissionHandler.reqStorage();
       return;
     }
-    if (_cameraController == null) return;
 
+    if (_cameraController == null || !formKey.currentState!.validate()) return;
+    CacheProvider.width.setValue(_width);
+    CacheProvider.height.setValue(_height);
     final pd = ProgressDialog(context: Get.context);
     pd.show(
-        max: 100, msg: 'Taking Photo...', progressType: ProgressType.valuable);
-    //* Take photo
-    pd.update(value: 0, msg: 'Taking Photo...');
-    final file = await _cameraController!.takePicture();
+        max: 100, msg: 'Taking Photos...', progressType: ProgressType.valuable);
+    int progress = 0;
+
+    //* Take photos
+    final files = <XFile>[];
+    int eachProgress = (40 / photosLimit).floor();
+    for (int i = 0; i < photosLimit; i++) {
+      pd.update(value: progress += eachProgress, msg: 'Taking Photos...');
+      files.add(await _cameraController!.takePicture());
+    }
+
     //* Resize
     //* Used isolate cause of image decoding will block the UI
-    pd.update(value: 50, msg: 'Resizing...');
-    final receivePort = ReceivePort();
-    await Isolate.spawn(
+    final resizedPhotos = <Uint8List>[];
+    for (var file in files) {
+      pd.update(value: progress += eachProgress, msg: 'Resizing...');
+      final receivePort = ReceivePort();
+      await Isolate.spawn(
         decodeIsolate,
         Decode(
-            file: File(file.path),
-            height: height,
-            width: width,
-            sendPort: receivePort.sendPort));
-    final resizedImage = await receivePort.first as Uint8List;
-    //* Save
-    pd.update(value: 90, msg: 'Saving...');
-    final savedImage = await _fileHandler.saveImage(resizedImage);
-    pd.close();
-    _photos.add(savedImage.path);
-    //* Check limit reach
-    if (_photos.length >= photosLimit) {
-      Get.toNamed(Routes.PHOTOS, arguments: _photos);
-    } else {
-      //* Otherwise inform user that photo saved successfully
-      AppUtil.snack('Saved Successfully');
+          file: File(file.path),
+          height: height,
+          width: width,
+          sendPort: receivePort.sendPort,
+        ),
+      );
+      final resizedPhoto = await receivePort.first as Uint8List;
+      resizedPhotos.add(resizedPhoto);
     }
-  }
 
-  clearPhotos() => _photos.clear();
+    //* Save
+    final photos = <String>[];
+    eachProgress = 20 ~/ photosLimit;
+    for (var photo in resizedPhotos) {
+      pd.update(value: progress += eachProgress, msg: 'Saving...');
+      final savedImage = await _fileHandler.saveImage(photo);
+      photos.add(savedImage.path);
+    }
+    pd.close();
+    Get.toNamed(Routes.PHOTOS, arguments: photos);
+  }
 
   //* Camera Initializing
   _initializeCamera() {
@@ -126,6 +135,8 @@ class EditorController extends GetxController with WidgetsBindingObserver {
       _cameraController!.initialize().then((_) {
         cameraResp.value =
             Resp(data: _cameraController, message: MsgState.data);
+        _cameraController!.setExposureOffset(CacheProvider.exposure
+            .getValue(defaultValue: AppConstant.def.exposure) as double);
       });
     }
   }
